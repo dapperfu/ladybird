@@ -68,7 +68,53 @@ EOF
 # Copy installed files to package directory
 print_status "Copying installed files to package directory..."
 mkdir -p "$package_dir/usr/local"
-cp -r /usr/local/* "$package_dir/usr/local/"
+
+# Copy only Ladybird-specific files
+if [[ -d "/usr/local/bin" ]]; then
+    mkdir -p "$package_dir/usr/local/bin"
+    # Copy Ladybird executables
+    for exe in Ladybird js wasm; do
+        if [[ -f "/usr/local/bin/$exe" ]]; then
+            cp "/usr/local/bin/$exe" "$package_dir/usr/local/bin/"
+        fi
+    done
+fi
+
+if [[ -d "/usr/local/lib" ]]; then
+    mkdir -p "$package_dir/usr/local/lib"
+    # Copy Ladybird libraries
+    cp /usr/local/lib/liblagom-*.so* "$package_dir/usr/local/lib/" 2>/dev/null || true
+    cp /usr/local/lib/libskia.so "$package_dir/usr/local/lib/" 2>/dev/null || true
+    cp /usr/local/lib/liblibEGL_angle.so "$package_dir/usr/local/lib/" 2>/dev/null || true
+    cp /usr/local/lib/liblibGLESv2_angle.so "$package_dir/usr/local/lib/" 2>/dev/null || true
+    cp /usr/local/lib/libSDL3.so* "$package_dir/usr/local/lib/" 2>/dev/null || true
+    cp /usr/local/lib/libxml2.so* "$package_dir/usr/local/lib/" 2>/dev/null || true
+    cp /usr/local/lib/libjpeg.so* "$package_dir/usr/local/lib/" 2>/dev/null || true
+    cp /usr/local/lib/libturbojpeg.so* "$package_dir/usr/local/lib/" 2>/dev/null || true
+    cp /usr/local/lib/libicu*.so* "$package_dir/usr/local/lib/" 2>/dev/null || true
+    cp /usr/local/lib/libjxl*.so* "$package_dir/usr/local/lib/" 2>/dev/null || true
+    cp /usr/local/lib/libcpptrace.so* "$package_dir/usr/local/lib/" 2>/dev/null || true
+    cp /usr/local/lib/libav*.so* "$package_dir/usr/local/lib/" 2>/dev/null || true
+    cp /usr/local/lib/libtommath.so* "$package_dir/usr/local/lib/" 2>/dev/null || true
+    cp /usr/local/lib/libdwarf.so* "$package_dir/usr/local/lib/" 2>/dev/null || true
+    cp /usr/local/lib/libswresample.so* "$package_dir/usr/local/lib/" 2>/dev/null || true
+    cp /usr/local/lib/libtheora*.so "$package_dir/usr/local/lib/" 2>/dev/null || true
+    cp /usr/local/lib/libsimdutf.so* "$package_dir/usr/local/lib/" 2>/dev/null || true
+    # Copy from build directory if not in /usr/local/lib
+    if [[ ! -f "$package_dir/usr/local/lib/libsimdutf.so.26.0.0" ]]; then
+        cp /projects/ladybird/Build/release/vcpkg_installed/x64-linux-dynamic/lib/libsimdutf.so.26.0.0 "$package_dir/usr/local/lib/" 2>/dev/null || true
+        ln -sf libsimdutf.so.26.0.0 "$package_dir/usr/local/lib/libsimdutf.so.26" 2>/dev/null || true
+    fi
+fi
+
+if [[ -d "/usr/local/include" ]]; then
+    mkdir -p "$package_dir/usr/local/include"
+    cp -r /usr/local/include/* "$package_dir/usr/local/include/" 2>/dev/null || true
+fi
+
+if [[ -f "/usr/local/COMMIT" ]]; then
+    cp "/usr/local/COMMIT" "$package_dir/usr/local/"
+fi
 
 # Create symlink for easier access
 mkdir -p "$package_dir/usr/bin"
