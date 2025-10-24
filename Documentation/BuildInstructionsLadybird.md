@@ -300,6 +300,10 @@ special CMake rules. The expected location of resource files can be tweaked by p
 the standard CMAKE_INSTALL_DATADIR variable. CMAKE_INSTALL_DATADIR is expected to be a path relative
 to CMAKE_INSTALL_PREFIX. If it is not, things will break.
 
+### Creating Debian Packages
+
+To create a .deb package for distribution on Debian/Ubuntu systems, see the [Debian Packaging Instructions](PackagingDebian.md) for detailed steps and automated scripts.
+
 ### Custom CMake build directory
 
 The script Meta/ladybird.py and the default preset in CMakePresets.json both define a build directory of
